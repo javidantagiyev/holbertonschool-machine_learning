@@ -1,10 +1,25 @@
 #!/usr/bin/env python3
+"""
+5-all_in_one module.
+
+Plots the first 5 graphs in a single figure arranged in a 3x2 grid,
+with the last plot spanning both columns.
+"""
+
 import numpy as np
 import matplotlib.pyplot as plt
 
 
 def all_in_one():
+    """
+    Plot all 5 previous graphs in one figure.
 
+    Requirements:
+    - 3x2 grid
+    - last plot spans two columns
+    - all axis labels and titles have fontsize='x-small'
+    - overall figure title: All in One
+    """
     y0 = np.arange(0, 11) ** 3
 
     mean = [69, 0]
@@ -31,7 +46,7 @@ def all_in_one():
     fig = plt.figure(figsize=(6.4, 4.8))
     fig.suptitle('All in One')
 
-    # 1) Line graph (top-left)
+    # 1) Line graph
     ax1 = plt.subplot2grid((3, 2), (0, 0))
     ax1.plot(np.arange(0, 11), y0, 'r-')
     ax1.set_xlim(0, 10)
@@ -39,14 +54,14 @@ def all_in_one():
     ax1.set_xlabel('x', fontsize='x-small')
     ax1.set_ylabel('y', fontsize='x-small')
 
-    # 2) Scatter (top-right)
+    # 2) Scatter plot
     ax2 = plt.subplot2grid((3, 2), (0, 1))
     ax2.scatter(x1, y1, c='m')
     ax2.set_title("Men's Height vs Weight", fontsize='x-small')
     ax2.set_xlabel('Height (in)', fontsize='x-small')
     ax2.set_ylabel('Weight (lbs)', fontsize='x-small')
 
-    # 3) Change of scale (middle-left)
+    # 3) Change of scale (log y)
     ax3 = plt.subplot2grid((3, 2), (1, 0))
     ax3.plot(x2, y2)
     ax3.set_yscale('log')
@@ -55,18 +70,18 @@ def all_in_one():
     ax3.set_xlabel('Time (years)', fontsize='x-small')
     ax3.set_ylabel('Fraction Remaining', fontsize='x-small')
 
-    # 4) Two is better than one (middle-right)
+    # 4) Two lines + legend
     ax4 = plt.subplot2grid((3, 2), (1, 1))
     ax4.plot(x3, y31, 'r--', label='C-14')
     ax4.plot(x3, y32, 'g-', label='Ra-226')
     ax4.set_xlim(0, 20000)
     ax4.set_ylim(0, 1)
-    ax4.set_title('Exponential Decay of Radioactive Elements', fontsize='x-small')
+    ax4.set_title('Exponential Decay of Radioactive Elems', fontsize='x-small')
     ax4.set_xlabel('Time (years)', fontsize='x-small')
     ax4.set_ylabel('Fraction Remaining', fontsize='x-small')
     ax4.legend(loc='upper right', fontsize='x-small')
 
-    # 5) Frequency histogram (bottom, spans 2 columns)
+    # 5) Histogram (spans both columns)
     ax5 = plt.subplot2grid((3, 2), (2, 0), colspan=2)
     ax5.hist(student_grades, bins=range(0, 101, 10), edgecolor='black')
     ax5.set_title('Project A', fontsize='x-small')
