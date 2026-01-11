@@ -3,6 +3,7 @@
 4-array module.
 """
 
+
 def array(df):
     """
     Convert the last 10 rows of High and Close columns to a NumPy array.

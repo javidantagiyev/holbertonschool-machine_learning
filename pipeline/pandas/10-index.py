@@ -3,6 +3,7 @@
 10-index module.
 """
 
+
 def index(df):
     """
     Set Timestamp column as the index of the DataFrame.

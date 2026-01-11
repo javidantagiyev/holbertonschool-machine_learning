@@ -3,6 +3,7 @@
 13-analyze module.
 """
 
+
 def analyze(df):
     """
     Compute descriptive statistics for all columns except Timestamp.

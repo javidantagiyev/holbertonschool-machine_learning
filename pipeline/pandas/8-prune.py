@@ -3,6 +3,7 @@
 8-prune module.
 """
 
+
 def prune(df):
     """
     Remove rows where Close is NaN.
