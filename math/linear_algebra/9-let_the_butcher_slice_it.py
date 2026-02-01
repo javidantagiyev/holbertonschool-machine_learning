@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 import numpy as np
 matrix = np.arange(1, 25).reshape(4, 6)
 mat1 = matrix[1:3, :]
