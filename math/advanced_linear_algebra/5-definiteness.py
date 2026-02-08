@@ -19,6 +19,9 @@ def definiteness(matrix):
     if n == 0 or n != m:
         return None
 
+    if not np.array_equal(matrix, matrix.T):
+        return None
+
     try:
         eigenvalues = np.linalg.eigvals(matrix)
     except Exception:
