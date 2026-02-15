@@ -8,24 +8,61 @@ class Poisson:
     def __init__(self, data=None, lambtha=1.):
         """
         Initializes the Poisson distribution
-
-        Parameters:
-        data (list): list of the data to estimate lambtha
-        lambtha (float): expected number of occurrences
         """
 
         if data is None:
-            # Use provided lambtha
             if lambtha <= 0:
                 raise ValueError("lambtha must be a positive value")
             self.lambtha = float(lambtha)
         else:
-            # Validate data
             if not isinstance(data, list):
                 raise TypeError("data must be a list")
 
             if len(data) < 2:
                 raise ValueError("data must contain multiple values")
 
-            # Estimate lambtha from data (mean of data)
             self.lambtha = float(sum(data) / len(data))
+
+    def pmf(self, k):
+        """
+        Calculates the value of the PMF for a given number of successes
+        """
+
+        try:
+            k = int(k)
+        except Exception:
+            return 0
+
+        if k < 0:
+            return 0
+
+        factorial = 1
+        for i in range(1, k + 1):
+            factorial *= i
+
+        e = 2.7182818285
+        return (e ** (-self.lambtha)) * (self.lambtha ** k) / factorial
+
+    def cdf(self, k):
+        """
+        Calculates the value of the CDF for a given number of successes
+        """
+
+        try:
+            k = int(k)
+        except Exception:
+            return 0
+
+        if k < 0:
+            return 0
+
+        e = 2.7182818285
+        cdf = 0
+
+        for i in range(0, k + 1):
+            factorial = 1
+            for j in range(1, i + 1):
+                factorial *= j
+            cdf += (e ** (-self.lambtha)) * (self.lambtha ** i) / factorial
+
+        return cdf
