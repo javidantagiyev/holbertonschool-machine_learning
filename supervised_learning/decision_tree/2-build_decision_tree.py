@@ -1,152 +1,120 @@
 #!/usr/bin/env python3
-"""Decision tree printing module."""
+"""
+Decision Tree representation with printable structure.
+"""
 
-import numpy as np
+
+class Decision_Tree:
+    """
+    Decision Tree class.
+    """
+
+    def __init__(self, root=None):
+        """
+        Initialize the Decision Tree.
+
+        Args:
+            root (Node): root node of the tree
+        """
+        self.root = root
+
+    def __str__(self):
+        """
+        Return string representation of the tree.
+        """
+        return self.root.__str__()
+
+
+class Leaf:
+    """
+    Leaf node of a Decision Tree.
+    """
+
+    def __init__(self, value, depth=None):
+        """
+        Initialize a Leaf.
+
+        Args:
+            value (int): value stored in leaf
+            depth (int): depth of leaf in tree
+        """
+        self.value = value
+        self.depth = depth
+        self.is_leaf = True
+
+    def __str__(self):
+        """
+        Return string representation of leaf.
+        """
+        return f"-> leaf [value={self.value}]"
 
 
 class Node:
-    """Represents a decision tree node."""
+    """
+    Internal node of a Decision Tree.
+    """
 
-    def __init__(self, feature=None, threshold=None,
-                 left_child=None, right_child=None,
-                 is_root=False, depth=0):
-        """Initialize node."""
+    def __init__(self, feature, threshold, left_child=None,
+                 right_child=None, depth=None, is_root=False):
+        """
+        Initialize a Node.
+
+        Args:
+            feature (int): feature index
+            threshold (float): split threshold
+            left_child (Node/Leaf): left subtree
+            right_child (Node/Leaf): right subtree
+            depth (int): depth of node
+            is_root (bool): whether node is root
+        """
         self.feature = feature
         self.threshold = threshold
         self.left_child = left_child
         self.right_child = right_child
-        self.is_leaf = False
-        self.is_root = is_root
-        self.sub_population = None
         self.depth = depth
-
-    def max_depth_below(self):
-        """Return maximum depth below node."""
-        if self.is_leaf:
-            return self.depth
-
-        left_depth = (
-            self.left_child.max_depth_below()
-            if self.left_child else self.depth
-        )
-
-        right_depth = (
-            self.right_child.max_depth_below()
-            if self.right_child else self.depth
-        )
-
-        return max(left_depth, right_depth)
-
-    def count_nodes_below(self, only_leaves=False):
-        """Count nodes below this node."""
-        left_count = (
-            self.left_child.count_nodes_below(only_leaves)
-            if self.left_child else 0
-        )
-
-        right_count = (
-            self.right_child.count_nodes_below(only_leaves)
-            if self.right_child else 0
-        )
-
-        if only_leaves:
-            return left_count + right_count
-
-        return 1 + left_count + right_count
+        self.is_root = is_root
+        self.is_leaf = False
 
     def left_child_add_prefix(self, text):
-        """Add prefix for left child."""
+        """
+        Add prefix formatting to left child string.
+        """
         lines = text.split("\n")
-        new_text = "+---> " + lines[0] + "\n"
+        new_text = "    +--" + lines[0] + "\n"
         for line in lines[1:]:
-            new_text += "|      " + line + "\n"
-        return new_text.rstrip()
-
+            new_text += "    |  " + line + "\n"
+        return new_text
 
     def right_child_add_prefix(self, text):
-        """Add prefix for right child."""
+        """
+        Add prefix formatting to right child string.
+        """
         lines = text.split("\n")
-        new_text = "+---> " + lines[0] + "\n"
+        new_text = "    +--" + lines[0] + "\n"
         for line in lines[1:]:
             new_text += "       " + line + "\n"
-        return new_text.rstrip()
+        return new_text
 
     def __str__(self):
-        """String representation of node."""
+        """
+        Return string representation of node and its children.
+        """
         if self.is_root:
-            node_repr = (
+            text = (
                 f"root [feature={self.feature}, "
                 f"threshold={self.threshold}]"
             )
         else:
-            node_repr = (
-                f"node [feature={self.feature}, "
+            text = (
+                f"-> node [feature={self.feature}, "
                 f"threshold={self.threshold}]"
             )
 
-        result = node_repr
-
-        if self.left_child:
-            result += "\n" + self.left_child_add_prefix(
-                str(self.left_child)
-            )
-
-        if self.right_child:
-            result += "\n" + self.right_child_add_prefix(
-                str(self.right_child)
-            )
-
-        return result
-
-
-class Leaf(Node):
-    """Represents a leaf node."""
-
-    def __init__(self, value, depth=None):
-        """Initialize leaf."""
-        super().__init__()
-        self.value = value
-        self.is_leaf = True
-        self.depth = depth
-
-    def max_depth_below(self):
-        """Return leaf depth."""
-        return self.depth
-
-    def count_nodes_below(self, only_leaves=False):
-        """Return 1 for leaf."""
-        return 1
-
-    def __str__(self):
-        """String representation of leaf."""
-        return f"leaf [value={self.value}]"
-
-
-class Decision_Tree:
-    """Decision tree class."""
-
-    def __init__(self, max_depth=10, min_pop=1,
-                 seed=0, split_criterion="random", root=None):
-        """Initialize tree."""
-        self.rng = np.random.default_rng(seed)
-        self.root = root if root else Node(is_root=True)
-        self.explanatory = None
-        self.target = None
-        self.max_depth = max_depth
-        self.min_pop = min_pop
-        self.split_criterion = split_criterion
-        self.predict = None
-
-    def depth(self):
-        """Return tree depth."""
-        return self.root.max_depth_below()
-
-    def count_nodes(self, only_leaves=False):
-        """Count nodes."""
-        return self.root.count_nodes_below(
-            only_leaves=only_leaves
+        left_text = self.left_child_add_prefix(
+            str(self.left_child)
+        )
+        right_text = self.right_child_add_prefix(
+            str(self.right_child)
         )
 
-    def __str__(self):
-        """Return tree string."""
-        return self.root.__str__()
+        return text + "\n" + left_text + right_text.rstrip("\n")
