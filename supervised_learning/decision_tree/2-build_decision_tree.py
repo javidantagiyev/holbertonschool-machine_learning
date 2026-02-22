@@ -57,17 +57,18 @@ class Node:
     def left_child_add_prefix(self, text):
         """Add prefix for left child."""
         lines = text.split("\n")
-        new_text = "    +---> " + lines[0] + "\n"
+        new_text = "+---> " + lines[0] + "\n"
         for line in lines[1:]:
-            new_text += "    |      " + line + "\n"
+            new_text += "|      " + line + "\n"
         return new_text.rstrip()
+
 
     def right_child_add_prefix(self, text):
         """Add prefix for right child."""
         lines = text.split("\n")
-        new_text = "    +---> " + lines[0] + "\n"
+        new_text = "+---> " + lines[0] + "\n"
         for line in lines[1:]:
-            new_text += "           " + line + "\n"
+            new_text += "       " + line + "\n"
         return new_text.rstrip()
 
     def __str__(self):
@@ -86,12 +87,14 @@ class Node:
         result = node_repr
 
         if self.left_child:
-            left_text = str(self.left_child)
-            result += "\n" + self.left_child_add_prefix(left_text)
+            result += "\n" + self.left_child_add_prefix(
+                str(self.left_child)
+            )
 
         if self.right_child:
-            right_text = str(self.right_child)
-            result += "\n" + self.right_child_add_prefix(right_text)
+            result += "\n" + self.right_child_add_prefix(
+                str(self.right_child)
+            )
 
         return result
 
