@@ -18,19 +18,19 @@ def specificity(confusion):
     containing the specificity of each class
     """
     # True Positives
-    true_positives = np.diag(confusion)
+    true_pos = np.diag(confusion)
 
     # False Positives
-    false_positives = np.sum(confusion, axis=0) - true_positives
+    false_pos = np.sum(confusion, axis=0) - true_pos
 
     # False Negatives
-    false_negatives = np.sum(confusion, axis=1) - true_positives
+    false_neg = np.sum(confusion, axis=1) - true_pos
 
     # True Negatives
     total = np.sum(confusion)
-    true_negatives = total - (true_positives + false_positives + false_negatives)
+    true_neg = total - (true_pos + false_pos + false_neg)
 
     # Specificity = TN / (TN + FP)
-    specificity = true_negatives / (true_negatives + false_positives)
+    specificity = true_neg / (true_neg + false_pos)
 
     return specificity
