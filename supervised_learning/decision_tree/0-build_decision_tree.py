@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 def max_depth_below(self):
     """
     Returns the maximum depth below this node (including leaves)
