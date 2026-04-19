@@ -1,75 +1,8 @@
 #!/usr/bin/env python3
 """Module for building the ResNet-50 architecture."""
 from tensorflow import keras as K
-
-
-def _identity_block(A_prev, filters):
-    """Build an identity block for use inside ResNet-50.
-
-    Args:
-        A_prev: output tensor from the previous layer.
-        filters: tuple or list of (F11, F3, F12) filter counts.
-
-    Returns:
-        Tensor: activated output of the identity block.
-    """
-    F11, F3, F12 = filters
-    init = K.initializers.HeNormal(seed=0)
-
-    X = K.layers.Conv2D(F11, (1, 1), padding='same',
-                        kernel_initializer=init)(A_prev)
-    X = K.layers.BatchNormalization(axis=3)(X)
-    X = K.layers.ReLU()(X)
-
-    X = K.layers.Conv2D(F3, (3, 3), padding='same',
-                        kernel_initializer=init)(X)
-    X = K.layers.BatchNormalization(axis=3)(X)
-    X = K.layers.ReLU()(X)
-
-    X = K.layers.Conv2D(F12, (1, 1), padding='same',
-                        kernel_initializer=init)(X)
-    X = K.layers.BatchNormalization(axis=3)(X)
-
-    X = K.layers.Add()([X, A_prev])
-    X = K.layers.ReLU()(X)
-    return X
-
-
-def _projection_block(A_prev, filters, s=2):
-    """Build a projection block for use inside ResNet-50.
-
-    Args:
-        A_prev: output tensor from the previous layer.
-        filters: tuple or list of (F11, F3, F12) filter counts.
-        s (int): stride for the first conv and the shortcut conv.
-
-    Returns:
-        Tensor: activated output of the projection block.
-    """
-    F11, F3, F12 = filters
-    init = K.initializers.HeNormal(seed=0)
-
-    X = K.layers.Conv2D(F11, (1, 1), strides=(s, s), padding='same',
-                        kernel_initializer=init)(A_prev)
-    X = K.layers.BatchNormalization(axis=3)(X)
-    X = K.layers.ReLU()(X)
-
-    X = K.layers.Conv2D(F3, (3, 3), padding='same',
-                        kernel_initializer=init)(X)
-    X = K.layers.BatchNormalization(axis=3)(X)
-    X = K.layers.ReLU()(X)
-
-    X = K.layers.Conv2D(F12, (1, 1), padding='same',
-                        kernel_initializer=init)(X)
-    X = K.layers.BatchNormalization(axis=3)(X)
-
-    shortcut = K.layers.Conv2D(F12, (1, 1), strides=(s, s), padding='same',
-                               kernel_initializer=init)(A_prev)
-    shortcut = K.layers.BatchNormalization(axis=3)(shortcut)
-
-    X = K.layers.Add()([X, shortcut])
-    X = K.layers.ReLU()(X)
-    return X
+identity_block = __import__('2-identity_block').identity_block
+projection_block = __import__('3-projection_block').projection_block
 
 
 def resnet50():
@@ -107,34 +40,34 @@ def resnet50():
     # ------------------------------------------------------------------ #
     # Stage 2 - conv2_x: 3 blocks, filters [64, 64, 256], stride=1
     # ------------------------------------------------------------------ #
-    X = _projection_block(X, [64, 64, 256], s=1)
-    X = _identity_block(X, [64, 64, 256])
-    X = _identity_block(X, [64, 64, 256])
+    X = projection_block(X, [64, 64, 256], s=1)
+    X = identity_block(X, [64, 64, 256])
+    X = identity_block(X, [64, 64, 256])
 
     # ------------------------------------------------------------------ #
     # Stage 3 - conv3_x: 4 blocks, filters [128, 128, 512], stride=2
     # ------------------------------------------------------------------ #
-    X = _projection_block(X, [128, 128, 512], s=2)
-    X = _identity_block(X, [128, 128, 512])
-    X = _identity_block(X, [128, 128, 512])
-    X = _identity_block(X, [128, 128, 512])
+    X = projection_block(X, [128, 128, 512], s=2)
+    X = identity_block(X, [128, 128, 512])
+    X = identity_block(X, [128, 128, 512])
+    X = identity_block(X, [128, 128, 512])
 
     # ------------------------------------------------------------------ #
     # Stage 4 - conv4_x: 6 blocks, filters [256, 256, 1024], stride=2
     # ------------------------------------------------------------------ #
-    X = _projection_block(X, [256, 256, 1024], s=2)
-    X = _identity_block(X, [256, 256, 1024])
-    X = _identity_block(X, [256, 256, 1024])
-    X = _identity_block(X, [256, 256, 1024])
-    X = _identity_block(X, [256, 256, 1024])
-    X = _identity_block(X, [256, 256, 1024])
+    X = projection_block(X, [256, 256, 1024], s=2)
+    X = identity_block(X, [256, 256, 1024])
+    X = identity_block(X, [256, 256, 1024])
+    X = identity_block(X, [256, 256, 1024])
+    X = identity_block(X, [256, 256, 1024])
+    X = identity_block(X, [256, 256, 1024])
 
     # ------------------------------------------------------------------ #
     # Stage 5 - conv5_x: 3 blocks, filters [512, 512, 2048], stride=2
     # ------------------------------------------------------------------ #
-    X = _projection_block(X, [512, 512, 2048], s=2)
-    X = _identity_block(X, [512, 512, 2048])
-    X = _identity_block(X, [512, 512, 2048])
+    X = projection_block(X, [512, 512, 2048], s=2)
+    X = identity_block(X, [512, 512, 2048])
+    X = identity_block(X, [512, 512, 2048])
 
     # ------------------------------------------------------------------ #
     # Output - Average Pooling  +  Fully-connected (1000 classes, softmax)
